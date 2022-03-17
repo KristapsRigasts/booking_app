@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<a href="/apartments" class="px-3">Back</a>
+
+<h3 class="text-center mt-5">Place your apartment in Booking</h3>
+<div class="container mt-5">
+    <form method="post" action="/apartments/create">
+<div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1" >Apartment name</span>
+    <input type="text" name="name" class="form-control" placeholder="Apartment name" aria-label="Apartment name" aria-describedby="basic-addon1">
+
+</div>
+    <div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon2">Apartment address</span>
+    <input type="text" name="address" class="form-control" placeholder="Apartment address" aria-label="Apartment address" aria-describedby="basic-addon2">
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon3" >Apartment description</span>
+    <textarea  class="form-control" name="description" placeholder="Apartment description" aria-label="Apartment description" aria-describedby="basic-addon3"></textarea>
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon4">Available from</span>
+        <input type="date" name="available_from" class="form-control" placeholder="Available from" aria-label="Available from" aria-describedby="basic-addon4">
+    </div>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon5">Available till</span>
+        <input type="date" name="available_till" class="form-control" placeholder="Available till" aria-label="Available till" aria-describedby="basic-addon5">
+    </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon6">Rate per night</span>
+            <input type="text" name="rate" class="form-control" placeholder="rate" aria-label="rate" aria-describedby="basic-addon6">
+        </div>
+    <div class="text-center mt-3">
+        <button type="submit" class="btn btn-lg btn-primary btn-block">Create</button>
+    </div>
+        <p style="color:red;">
+            <small>{{ errors.name[0] }}</small>
+        </p>
+        <p style="color:red;">
+            <small>{{ errors.address[0] }}</small>
+        </p>
+        <p style="color:red;">
+            <small>{{ errors.description[0] }}</small>
+        </p>
+        <p style="color:red;">
+            <small>{{ errors.available_from[0] }}</small>
+        </p>
+        <p style="color:red;">
+            <small>{{ errors.available_till[0] }}</small>
+        </p>
+        <p style="color:red;">
+            <small>{{ errors.rate[0] }}</small>
+        </p>
+</form>
+</div>
+
+<!--</div>-->
+
+
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col">
+            <div>
+                <form method="post" action="/apartments/availability">
+                    <div class=" mb-1">
+                        <div class="mt-1 mb-1">Reservation starting date</div>
+                        <input type="date" name="available_from" >
+                    </div>
+                    <div class=" mb-1">
+                        <div class="mt-1 mb-1">Reservation end date</div>
+                        <input type="date" name="available_till"  >
+                    </div>
+                    <div class=" mt-2">
+                        <button type="submit" class="btn btn-sm btn-info btn-block">Check availability</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col">
+            {% if userId != null %}
+            <a href="/apartments/create" class="btn btn-success btn-sm">Add apartment</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row row-cols-3  ">
+        {% for apartment in apartments %}
+
+
+        <div class="col mt-3 mb-3 text-center border border-primary ">
+            <a href="/apartments/{{ apartment.id }}">
+            <h5 class="text-dark mt-1"> {{ apartment.name }} </h5>
+            <small> {{ apartment.address }} </small>
+            <div class="text-dark"> {{ apartment.description }}</div>
+        </a>
+            <div class="text-center text-success fs-4 ">
+                {{ apartment.rate }} EUR per night
+            </div>
+            {% if userId != null and userId == apartment.userId  %}
+            <div class="text-end">
+                <form method="post" action="/apartments/{{ apartment.id }}/delete">
+                    <button class="btn btn-secondary btn-sm" type="submit" onclick="return confirm('Are you sure?');">X</button>
+                </form>
+            </div>
+            {% endif %}
+
+        </div>
+
+
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

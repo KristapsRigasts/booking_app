@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<a href="/apartments" class="px-3">Back</a>
+
+<div class="container mt-5">
+    <form method="post" action="/apartments/{{ apartment.id }}">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1" >Apartment name</span>
+            <input type="text" name="name" class="form-control" aria-label="Apartment name"
+                   aria-describedby="basic-addon1" value="{{ apartment.name }}">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon2">Apartment address</span>
+            <input type="text" name="address" class="form-control" aria-label="Apartment address"
+                   aria-describedby="basic-addon2" value="{{ apartment.address }}">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon3" >Apartment description</span>
+            <textarea  class="form-control" name="description" aria-label="Apartment description"
+                       aria-describedby="basic-addon3" >{{ apartment.description }}</textarea>
+        </div>
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-lg btn-primary btn-block">Edit</button>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}

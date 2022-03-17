@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<a href="/apartments" class="px-3">Back</a>
+
+<div class="container">
+    <div class="mt-5">
+    Reservation dates from {{ availabilityFrom }} till {{ availabilityTill }}
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row row-cols-3 mt-5 ">
+        {% for apartment in apartments %}
+
+        <div class="col mt-3 mb-3 text-center border border-primary ">
+                <h5 class="text-dark mt-1"> {{ apartment.name }} </h5>
+                <small> {{ apartment.address }} </small>
+                <div class="text-dark"> {{ apartment.description }}</div>
+            {% if apartment.status == 'taken'  %}
+            <div class="text-end text-secondary">
+            Apartment is not available
+                </div>
+            {% endif %}
+
+
+            {% if userId != null and apartment.status == 'available'  %}
+            <div class="text-center text-success fs-4 ">
+                {{ apartment.rate }} EUR per night
+            </div>
+            <div class="text-end mb-2 mt-2">
+                <form method="post" action="/apartments/{{ apartment.id }}/reservations">
+                    <button class="btn btn-success btn-sm" type="submit" onclick="return confirm('Are you sure?');">
+                        Confirm reservation
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}

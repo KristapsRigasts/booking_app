@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<a href="/apartments" class="px-3">Back</a>
+
+<div style=" position: fixed; top:30%; left:20% ">
+<h1 class="text-center mt-5px" style="color:#800080">
+Your reservation at {{ apartment.name }} ( {{ apartment.address }} ) <br>
+    with
+    {{ apartment.rate }} EUR per night has been confirmed! <br>
+    Period: {{ startingDay }} - {{ endingDay }} <br>
+    Total amount: {{ totalAmount }} EUR <br>
+    <br>
+    Thank you for making you reservations through BookingAPP!
+</h1>
+</div>
+
+
+
+
+
+
+{% endblock %}
