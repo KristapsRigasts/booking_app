@@ -20,6 +20,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/users/login', ['App\Controllers\UsersController', 'logIn']);
     $r->addRoute('POST', '/users/login', ['App\Controllers\UsersController', 'validateLogIn']);
     $r->addRoute('GET', '/users/logout', ['App\Controllers\UsersController', 'logOut']);
+    $r->addRoute('GET', '/users/myreservations', ['App\Controllers\UsersController', 'showReservations']);
 
     //Apartments
     $r->addRoute('GET', '/apartments', ['App\Controllers\ApartmentsController', 'index']);

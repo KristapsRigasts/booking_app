@@ -263,20 +263,20 @@ class ApartmentsController
         }
 
 
-//        $availabilityT= Carbon::createFromFormat('Y-m-d', $availabilityTill);
+        $availabilityT= Carbon::createFromFormat('Y-m-d', $availabilityTill);
 
         $today = Carbon::today();
-//        $tomorrow = Carbon::tomorrow();
+        $tomorrow = Carbon::tomorrow();
 
         if($availabilityF->lt($today))
         {
             $availabilityFrom =Carbon::today()->toDateString();
         }
 
-//        if($availabilityT->lt($tomorrow))
-//        {
-//            $availabilityTill = Carbon::tomorrow()->toDateString();
-//        }
+        if($availabilityT->lt($tomorrow))
+        {
+            $availabilityTill = Carbon::tomorrow()->toDateString();
+        }
 
         $_SESSION['availability_from']=$availabilityFrom;
         $_SESSION['availability_till']=$availabilityTill;

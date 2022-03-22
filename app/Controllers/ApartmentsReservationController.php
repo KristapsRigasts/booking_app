@@ -79,7 +79,7 @@ class ApartmentsReservationController
             'startingDate' => $today ,
             'endingDate' => $endingDay,
             'errors' => Errors::getAll(),
-            'wrong' => $_SESSION['wrong'],
+            'wrong' => $_SESSION['wrong'] ,
             'inputs' => $_SESSION['inputs'] ?? []
         ]);
 
@@ -151,5 +151,5 @@ class ApartmentsReservationController
             return new Redirect('/apartments/' . $vars["id"] . '/apartmentsreservations');
         }
     }
-
+    
 }

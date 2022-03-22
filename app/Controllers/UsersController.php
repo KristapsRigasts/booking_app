@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Connection;
 use App\DBConnection;
 use App\Exceptions\FormValidationException;
+use App\Models\Reservation;
 use App\Redirect;
 use App\Session;
 use App\Validation\Errors;
@@ -16,7 +17,8 @@ class UsersController
 {
     public function home(): View
     {
-            return new View('Home/home', ['userName'=> $_SESSION['name'], 'userId' =>$_SESSION['userid']]);
+            return new View('Home/home', ['userName'=> $_SESSION['name'] ?? [],
+                'userId' =>$_SESSION['userid'] ?? []]);
     }
 
     public function index(): View
@@ -143,6 +145,62 @@ class UsersController
         unset ($_SESSION["name"]);
         unset ($_SESSION["surname"]);
         return new Redirect('/');
+    }
+
+    public function showReservations()
+    {
+        $apartmentsReservationQuery = Connection::connection()
+            ->createQueryBuilder()
+            ->select('*')
+            ->from('apartments_reservations')
+            ->where('user_id = ?')
+            ->setParameter(0, $_SESSION["userid"])
+            ->executeQuery()
+            ->fetchAllAssociative();
+
+        $userReservations =[];
+
+        foreach($apartmentsReservationQuery as $reservations)
+        {
+
+                $apartmentQuery = Connection::connection()
+                    ->createQueryBuilder()
+                    ->select('*')
+                    ->from('apartments')
+                    ->where('id = ?')
+                    ->setParameter(0, $reservations['apartment_id'])
+                    ->executeQuery()
+                    ->fetchAssociative();
+
+                if($apartmentQuery == false)
+                {
+                    continue;
+                }
+                else
+                {
+
+
+                $startingDay = strtotime($reservations['reserved_from']);
+                $endingDay = strtotime($reservations['reserved_till']);
+                $totalAmount = ($endingDay - $startingDay) / 86400 * $apartmentQuery['rate_per_night'];
+
+                $userReservations[] = new Reservation(
+                    $apartmentQuery["name"],
+                    $apartmentQuery['address'],
+                    $reservations["reserved_from"],
+                    $reservations["reserved_till"],
+                    $apartmentQuery['rate_per_night'],
+                    $totalAmount
+                );
+            }
+
+        }
+        return new View('Users/reservations',[
+            'userName'=> $_SESSION['name'],
+            'userId' =>$_SESSION['userid'],
+            'reservations'=> $userReservations ?? []
+        ]);
+
     }
 
 }

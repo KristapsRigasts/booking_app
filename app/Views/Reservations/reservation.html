@@ -41,7 +41,7 @@
     Reservation till:
     <input id="datepicker2" name="reservation_till" >
 
-    <button type="submit" name="submit" class="btn btn-sm btn-primary btn-block">Make reservation</button>
+    <button type="submit" name="submit" class="btn btn-sm btn-primary btn-block" onclick="return confirm('Are you sure?');">Make reservation</button>
 </form>
     <p style="color:red;">
         <small>{{ wrong }}</small>

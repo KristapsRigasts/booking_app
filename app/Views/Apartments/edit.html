@@ -2,7 +2,7 @@
 {% block content %}
 
 <a href="/apartments" class="px-3">Back</a>
-
+{% if userId != null %}
 <div class="container mt-5">
     <form method="post" action="/apartments/{{ apartment.id }}">
         <div class="input-group mb-3">
@@ -26,5 +26,5 @@
     </form>
 </div>
 
-
+{% endif %}
 {% endblock %}

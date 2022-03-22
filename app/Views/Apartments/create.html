@@ -2,7 +2,7 @@
 {% block content %}
 
 <a href="/apartments" class="px-3">Back</a>
-
+{% if userId != null %}
 <h3 class="text-center mt-5">Place your apartment in Booking</h3>
 <div class="container mt-5">
     <form method="post" action="/apartments/create">
@@ -54,7 +54,7 @@
         </p>
 </form>
 </div>
-
+{% endif %}
 <!--</div>-->
 
 
