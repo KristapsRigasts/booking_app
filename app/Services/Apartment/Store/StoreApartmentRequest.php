@@ -1,34 +1,27 @@
 <?php
 
-namespace App\Models;
+namespace App\Services\Apartment\Store;
 
-class Apartment
+class StoreApartmentRequest
 {
     private string $name;
     private string $address;
     private string $description;
     private string $availableFrom;
     private string $availableTill;
-    private ?int $user_id;
-    private ?int $id;
-    private ?string $status;
-    private ?int $rate;
+    private int $userId;
+    private int $ratePerNight;
 
-
-    public function __construct(string $name, string $address, string $description, string $availableFrom,
-                                string $availableTill, ?int $user_id = null, ?int $id = null, ?string $status = null,
-                                ?int $rate = null)
+    public function __construct(string $name, string $address, string $description,
+                                string $availableFrom, string $availableTill, int $userId, int $ratePerNight)
     {
         $this->name = $name;
         $this->address = $address;
         $this->description = $description;
         $this->availableFrom = $availableFrom;
         $this->availableTill = $availableTill;
-        $this->user_id = $user_id;
-        $this->id = $id;
-
-        $this->status = $status;
-        $this->rate = $rate;
+        $this->userId = $userId;
+        $this->ratePerNight = $ratePerNight;
     }
 
     public function getName(): string
@@ -56,23 +49,13 @@ class Apartment
         return $this->availableTill;
     }
 
-    public function getUserId(): ?int
+    public function getUserId(): int
     {
-        return $this->user_id;
+        return $this->userId;
     }
 
-    public function getId(): ?int
+    public function getRatePerNight(): int
     {
-        return $this->id;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function getRate(): ?int
-    {
-        return $this->rate;
+        return $this->ratePerNight;
     }
 }

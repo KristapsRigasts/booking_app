@@ -8,21 +8,22 @@ class Review
     private string $surname;
     private int $userId;
     private string $review;
-    private int $apartment_id;
-    private string $created_at;
-    private ?int $id;
+    private int $apartmentId;
+    private string $createdAt;
+    private ?int $reviewId;
 
 
 
-    public function __construct(string $name, string $surname, int $userId, string $review, int $apartment_id, string $created_at, ?int $id=null)
+    public function __construct(string $name, string $surname, int $userId, string $review, int $apartmentId,
+                                string $createdAt, ?int $reviewId=null)
     {
         $this->name = $name;
         $this->surname = $surname;
         $this->userId = $userId;
         $this->review = $review;
-        $this->apartment_id = $apartment_id;
-        $this->created_at = $created_at;
-        $this->id = $id;
+        $this->apartmentId = $apartmentId;
+        $this->createdAt = $createdAt;
+        $this->reviewId = $reviewId;
 
     }
 
@@ -48,17 +49,17 @@ class Review
 
     public function getApartmentId(): int
     {
-        return $this->apartment_id;
+        return $this->apartmentId;
     }
 
     public function getCreatedAt(): string
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->reviewId;
     }
 
 }

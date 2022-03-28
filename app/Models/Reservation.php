@@ -10,9 +10,12 @@ class Reservation
     private string $reservedTill;
     private int $ratePerNight;
     private int $totalAmount;
+    private ?int $userId;
+    private ?int $apartmentId;
 
     public function __construct(string $name, string $address, string $reservedFrom,
-                                string $reservedTill, int $ratePerNight, int $totalAmount )
+                                string $reservedTill, int $ratePerNight, int $totalAmount,
+                                ?int $userId = null, ?int $apartmentId = null)
     {
         $this->name = $name;
         $this->address = $address;
@@ -20,6 +23,8 @@ class Reservation
         $this->reservedTill = $reservedTill;
         $this->ratePerNight = $ratePerNight;
         $this->totalAmount = $totalAmount;
+        $this->userId = $userId;
+        $this->apartmentId = $apartmentId;
     }
 
     public function getName(): string
@@ -55,5 +60,15 @@ class Reservation
     public function getTotalAmount(): int
     {
         return $this->totalAmount;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    public function getApartmentId(): ?int
+    {
+        return $this->apartmentId;
     }
 }

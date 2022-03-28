@@ -1,20 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Services\User\Add;
 
-class User
+class AddUserRequest
 {
     private string $name;
     private string $surname;
-    private ?int $id;
-    private ?string $email;
-    private ?string $password;
+    private string $email;
+    private string $password;
 
-    public function __construct(string $name, string $surname, ?int $id = null, ?string $email= null, ?string $password= null)
+    public function __construct(string $name, string $surname, string $email, string $password)
     {
         $this->name = $name;
         $this->surname = $surname;
-        $this->id = $id;
         $this->email = $email;
         $this->password = $password;
     }
@@ -29,18 +27,14 @@ class User
         return $this->surname;
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
 }
+

@@ -2,12 +2,17 @@
 
 namespace App\Controllers;
 
-use App\Connection;
-use App\DBConnection;
 use App\Exceptions\FormValidationException;
 use App\Models\Reservation;
 use App\Redirect;
-use App\Session;
+use App\Services\Apartment\Show\ShowApartmentRequest;
+use App\Services\Apartment\Show\ShowApartmentService;
+use App\Services\Reservation\Get\GetReservationRequest;
+use App\Services\Reservation\Get\GetReservationService;
+use App\Services\User\Add\AddUserRequest;
+use App\Services\User\Add\AddUserService;
+use App\Services\User\Show\ShowUserRequest;
+use App\Services\User\Show\ShowUserService;
 use App\Validation\Errors;
 use App\Validation\FormValidator;
 use App\View;
@@ -17,18 +22,18 @@ class UsersController
 {
     public function home(): View
     {
-            return new View('Home/home', ['userName'=> $_SESSION['name'] ?? [],
-                'userId' =>$_SESSION['userid'] ?? []]);
+        return new View('Home/home', ['userName' => $_SESSION['name'] ?? [],
+            'userId' => $_SESSION['userid'] ?? []]);
     }
 
     public function index(): View
     {
-        return  new View('Users/index');
+        return new View('Users/index');
     }
 
-        public function show(array $vars): View
+    public function show(array $vars): View
     {
-        return  new View('Users/show', [
+        return new View('Users/show', [
             'id' => $vars['id']
         ]);
     }
@@ -36,16 +41,14 @@ class UsersController
     public function register(): View
     {
         return new View('Users/register', [
-                'inputs' => $_SESSION['inputs'] ?? [],
-                'errors' => Errors::getAll()]);
-
+            'inputs' => $_SESSION['inputs'] ?? [],
+            'errors' => Errors::getAll()]);
     }
 
-    public function store():Redirect
+    public function store(): Redirect
     {
-
         try {
-            $validator =(new FormValidator($_POST, [
+            $validator = (new FormValidator($_POST, [
                 'name' => ['required'],
                 'surname' => ['required'],
                 'email' => ['required'],
@@ -53,27 +56,22 @@ class UsersController
             ]));
             $validator->passes();
 
-            $userQueryCheck = Connection::connection()
-                ->createQueryBuilder()
-                ->select('*')
-                ->from('users')
-                ->where('email = ?')
-                ->setParameter(0, $_POST['email'])
-                ->executeQuery()
-                ->fetchAssociative();
+            $userService = new ShowUserService();
+            $userQueryCheck = $userService->execute(new ShowUserRequest($_POST['email']));
 
             if ($userQueryCheck != false) {
                 return new Redirect('/users/register?error=emailalreadytaken');
             }
 
             $passwordHashed = password_hash($_POST['password'], PASSWORD_BCRYPT);
-            Connection::connection()
-                ->insert('users', [
-                    'name' => $_POST['name'],
-                    'surname' => $_POST['surname'],
-                    'email' => $_POST['email'],
-                    'password' => $passwordHashed
-                ]);
+
+            $service = new AddUserService();
+            $service->execute(new AddUserRequest(
+                $_POST['name'],
+                $_POST['surname'],
+                $_POST['email'],
+                $passwordHashed
+            ));
 
             return new Redirect('/');
 
@@ -88,7 +86,7 @@ class UsersController
 
     public function logIn(): View
     {
-        return new View('Users/login',[
+        return new View('Users/login', [
             'errors' => Errors::getAll(),
             'inputs' => $_SESSION['inputs'] ?? []
         ]);
@@ -97,40 +95,31 @@ class UsersController
     public function validateLogIn(): Redirect
     {
         try {
-            $validator =(new FormValidator($_POST, [
+            $validator = (new FormValidator($_POST, [
                 'email' => ['required'],
                 'password' => ['required']
             ]));
             $validator->passes();
 
-            $userQuery = Connection::connection()
-                ->createQueryBuilder()
-                ->select('*')
-                ->from('users')
-                ->where('email = ?')
-                ->setParameter(0, $_POST['email'])
-                ->executeQuery()
-                ->fetchAssociative();
+            $userService = new ShowUserService();
+            $userQuery = $userService->execute(new ShowUserRequest($_POST['email']));
 
             if ($userQuery === false) {
                 return new Redirect('/users/login?error=usernotfound');
-            }
-            else{
+            } else {
                 $checkPwd = password_verify($_POST['password'], $userQuery['password']);
 
-                if($checkPwd == false)
-                {
+                if ($checkPwd == false) {
                     return new Redirect('/users/login?error=wrongpassword');
-                }
-                else
-                {
+                } else {
                     $_SESSION["userid"] = $userQuery['id'];
                     $_SESSION["name"] = $userQuery['name'];
                     $_SESSION["surname"] = $userQuery['surname'];
 
                     return new Redirect('/');
                 }
-            }} catch (FormValidationException $exception) {
+            }
+        } catch (FormValidationException $exception) {
 
             $_SESSION['errors'] = $validator->getErrors();
             $_SESSION['inputs'] = $_POST;
@@ -147,60 +136,34 @@ class UsersController
         return new Redirect('/');
     }
 
-    public function showReservations()
+    public function showReservations(): View
     {
-        $apartmentsReservationQuery = Connection::connection()
-            ->createQueryBuilder()
-            ->select('*')
-            ->from('apartments_reservations')
-            ->where('user_id = ?')
-            ->setParameter(0, $_SESSION["userid"])
-            ->executeQuery()
-            ->fetchAllAssociative();
+        $reservationService = new GetReservationService();
+        $apartmentsReservationQuery = $reservationService->execute(new GetReservationRequest($_SESSION["userid"]));
 
-        $userReservations =[];
+        $userReservations = [];
 
-        foreach($apartmentsReservationQuery as $reservations)
-        {
+        foreach ($apartmentsReservationQuery as $reservations) {
+            $showService = new ShowApartmentService();
+            $apartmentQuery = $showService->execute(new ShowApartmentRequest((int)$reservations->getApartmentId()));
 
-                $apartmentQuery = Connection::connection()
-                    ->createQueryBuilder()
-                    ->select('*')
-                    ->from('apartments')
-                    ->where('id = ?')
-                    ->setParameter(0, $reservations['apartment_id'])
-                    ->executeQuery()
-                    ->fetchAssociative();
+            $startingDay = strtotime($reservations->getReservedFrom());
+            $endingDay = strtotime($reservations->getReservedTill());
+            $totalAmount = ($endingDay - $startingDay) / 86400 * $apartmentQuery->getRate();
 
-                if($apartmentQuery == false)
-                {
-                    continue;
-                }
-                else
-                {
-
-
-                $startingDay = strtotime($reservations['reserved_from']);
-                $endingDay = strtotime($reservations['reserved_till']);
-                $totalAmount = ($endingDay - $startingDay) / 86400 * $apartmentQuery['rate_per_night'];
-
-                $userReservations[] = new Reservation(
-                    $apartmentQuery["name"],
-                    $apartmentQuery['address'],
-                    $reservations["reserved_from"],
-                    $reservations["reserved_till"],
-                    $apartmentQuery['rate_per_night'],
-                    $totalAmount
-                );
-            }
-
+            $userReservations[] = new Reservation(
+                $apartmentQuery->getName(),
+                $apartmentQuery->getAddress(),
+                $reservations->getReservedFrom(),
+                $reservations->getReservedTill(),
+                $apartmentQuery->getRate(),
+                $totalAmount
+            );
         }
-        return new View('Users/reservations',[
-            'userName'=> $_SESSION['name'],
-            'userId' =>$_SESSION['userid'],
-            'reservations'=> $userReservations ?? []
+        return new View('Users/reservations', [
+            'userName' => $_SESSION['name'],
+            'userId' => $_SESSION['userid'],
+            'reservations' => $userReservations ?? []
         ]);
-
     }
-
 }
