@@ -8,4 +8,5 @@ interface UserRepository
 {
     public function showUser(string $email);
     public function addUser(User $user);
+    public function getUser(string $email);
 }

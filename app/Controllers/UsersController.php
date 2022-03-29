@@ -11,6 +11,8 @@ use App\Services\Reservation\Get\GetReservationRequest;
 use App\Services\Reservation\Get\GetReservationService;
 use App\Services\User\Add\AddUserRequest;
 use App\Services\User\Add\AddUserService;
+use App\Services\User\Get\GetUserRequest;
+use App\Services\User\Get\GetUserService;
 use App\Services\User\Show\ShowUserRequest;
 use App\Services\User\Show\ShowUserService;
 use App\Validation\Errors;
@@ -101,20 +103,24 @@ class UsersController
             ]));
             $validator->passes();
 
-            $userService = new ShowUserService();
-            $userQuery = $userService->execute(new ShowUserRequest($_POST['email']));
+            $service = new GetUserService();
+            $userData = $service->execute(new GetUserRequest($_POST['email']));
 
-            if ($userQuery === false) {
+            if ($userData === 0) {
                 return new Redirect('/users/login?error=usernotfound');
             } else {
-                $checkPwd = password_verify($_POST['password'], $userQuery['password']);
+
+                $userService = new ShowUserService();
+                $userQuery = $userService->execute(new ShowUserRequest($_POST['email']));
+
+                $checkPwd = password_verify($_POST['password'], $userQuery->getPassword());
 
                 if ($checkPwd == false) {
                     return new Redirect('/users/login?error=wrongpassword');
                 } else {
-                    $_SESSION["userid"] = $userQuery['id'];
-                    $_SESSION["name"] = $userQuery['name'];
-                    $_SESSION["surname"] = $userQuery['surname'];
+                    $_SESSION["userid"] = $userQuery->getId();
+                    $_SESSION["name"] = $userQuery->getName();
+                    $_SESSION["surname"] = $userQuery->getSurname();
 
                     return new Redirect('/');
                 }

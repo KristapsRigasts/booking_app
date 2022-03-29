@@ -8,17 +8,25 @@ use App\Redirect;
 
 class PDOUserRepository implements UserRepository
 {
-    public function showUser(string $email): array
+    public function getUser(string $email): int
     {
-         return Connection::connection()
+         $userQuery= Connection::connection()
             ->createQueryBuilder()
-            ->select('*')
+            ->select('id')
             ->from('users')
             ->where('email = ?')
             ->setParameter(0, $email)
             ->executeQuery()
             ->fetchAssociative();
 
+         if($userQuery == false)
+         {
+             return 0;
+         }
+         else
+         {
+             return $userQuery['id'];
+         }
     }
 
     public function addUser(User $user): void
@@ -30,5 +38,26 @@ class PDOUserRepository implements UserRepository
                 'email' => $user->getEmail(),
                 'password' => $user->getPassword()
             ]);
+    }
+
+    public function showUser(string $email): User
+    {
+        $userQuery= Connection::connection()
+            ->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('email = ?')
+            ->setParameter(0, $email)
+            ->executeQuery()
+            ->fetchAssociative();
+
+        return new User(
+            $userQuery['name'],
+            $userQuery['surname'],
+            $userQuery['id'],
+            $userQuery['email'],
+            $userQuery['password']
+        );
+
     }
 }

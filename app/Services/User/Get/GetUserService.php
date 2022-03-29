@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Services\User\Show;
+namespace App\Services\User\Get;
 
-use App\Models\User;
 use App\Repositories\User\PDOUserRepository;
 use App\Repositories\User\UserRepository;
 
-class ShowUserService
+class GetUserService
 {
     private UserRepository $userRepository;
 
@@ -15,8 +14,8 @@ class ShowUserService
         $this->userRepository = new PDOUserRepository();
     }
 
-    public function execute(ShowUserRequest $request): User
+    public function execute(GetUserRequest $request): int
     {
-       return $this->userRepository->showUser($request->getEmail());
+        return $this->userRepository->getUser($request->getEmail());
     }
 }
